@@ -1,0 +1,30 @@
+{
+  "name": "pr-review-skill",
+  "version": "1.0.0",
+  "description": "Reviews de PR assistidos por IA confiáveis — skill canônica versionada no repo, com adapters para Claude Code, Cursor e Copilot",
+  "type": "module",
+  "bin": {
+    "pr-review-skill": "bin/cli.js"
+  },
+  "files": [
+    "bin/",
+    "src/",
+    "skill/"
+  ],
+  "engines": {
+    "node": ">=18"
+  },
+  "scripts": {
+    "test": "node --test test/"
+  },
+  "keywords": [
+    "pr-review",
+    "code-review",
+    "ai",
+    "claude",
+    "cursor",
+    "copilot",
+    "skill"
+  ],
+  "license": "MIT"
+}
