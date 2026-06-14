@@ -1,5 +1,7 @@
 # pr-review-skill
 
+**Português** · [English](README.en.md) · [Español](README.es.md)
+
 Reviews de PR assistidos por IA **confiáveis o suficiente para agir sobre eles** — sem o ruído de falsos positivos que destrói a confiança na ferramenta.
 
 Uma skill canônica versionada no seu repo. Funciona com **qualquer ferramenta agêntica** de código: a skill é markdown puro, agnóstico de ferramenta. Vem com adapters-ponteiro nativos para **Claude Code**, **Cursor** e **GitHub Copilot** — qualquer outro agente (Windsurf, Zed, Aider, Continue, …) é só apontar para `SKILL.md`. Baseada no framework *Os 7 Pilares do Review Confiável com IA*.
