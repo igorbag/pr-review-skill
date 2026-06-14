@@ -124,45 +124,57 @@ Montado a partir de um template estruturado com: findings com IDs estáveis + co
 ## Os 7 Pilares
 
 ```mermaid
-mindmap
-  root((Review<br/>Confiável<br/>com IA))
-    1. Especialização
-      6 agentes focados
-      escopo + checklist próprios
-      um não distrai o outro
-    2. Grounding
-      docs do SEU repo antes do diff
-      sem doc citável, sem finding
-      regras são SUAS, não do modelo
-    3. Second Pass
-      relê o diff inteiro
-      justifica cada arquivo limpo
-      "parece ok" é inválido
-    4. Precision > Recall
-      confiança < 80% é cortada
-      cry wolf mata a adoção
-      segurança vira verificação sugerida
-    5. Human-in-the-Loop
-      IA nunca aprova nem rejeita
-      humano decide com 👍 e /fix
-      decisão é sempre sua
-    6. Rastreabilidade
-      spec vs diff item a item
-      ✅ ❌ ⬜ com evidência
-      revisa a ENTREGA, não só o código
-    7. Meta-review
-      agente audita os achados
-      remove imports fantasma
-      IA revisando IA
+flowchart LR
+    subgraph P1 ["① Especialização"]
+        direction TB
+        A1[6 agentes focados] --> A2[escopo + checklist<br/>próprios] --> A3[um não distrai<br/>o outro]
+    end
+    subgraph P2 ["② Grounding"]
+        direction TB
+        B1[docs do SEU repo<br/>antes do diff] --> B2[sem doc citável,<br/>sem finding] --> B3[regras são SUAS,<br/>não do modelo]
+    end
+    subgraph P3 ["③ Second Pass"]
+        direction TB
+        C1[relê o diff inteiro] --> C2[justifica cada<br/>arquivo limpo] --> C3["parece ok<br/>é inválido"]
+    end
+    subgraph P4 ["④ Precision &gt; Recall"]
+        direction TB
+        D1[confiança &lt; 80%<br/>é cortada] --> D2[cry wolf mata<br/>a adoção] --> D3[segurança vira<br/>verificação sugerida]
+    end
+    subgraph P5 ["⑤ Human-in-the-Loop"]
+        direction TB
+        E1[IA nunca aprova<br/>nem rejeita] --> E2[humano decide<br/>com 👍 e /fix] --> E3[decisão é<br/>sempre sua]
+    end
+    subgraph P6 ["⑥ Rastreabilidade"]
+        direction TB
+        F1[spec vs diff<br/>item a item] --> F2[✅ ❌ ⬜<br/>com evidência] --> F3[revisa a ENTREGA,<br/>não só o código]
+    end
+    subgraph P7 ["⑦ Meta-review"]
+        direction TB
+        G1[agente audita<br/>os achados] --> G2[remove imports<br/>fantasma] --> G3[IA revisando IA]
+    end
+
+    P1 ~~~ P2 ~~~ P3 ~~~ P4
+    P5 ~~~ P6 ~~~ P7
+
+    style P1 fill:#dbeafe,stroke:#2563eb
+    style P2 fill:#dcfce7,stroke:#16a34a
+    style P3 fill:#fef9c3,stroke:#ca8a04
+    style P4 fill:#fee2e2,stroke:#dc2626
+    style P5 fill:#f3e8ff,stroke:#8b5cf6
+    style P6 fill:#ccfbf1,stroke:#0d9488
+    style P7 fill:#ffedd5,stroke:#ea580c
 ```
 
-1. **Especialização** — 6 agentes focados (5 passes + meta-review), cada um com escopo e checklist próprios
-2. **Grounding** — os docs do SEU repo são carregados antes do diff; finding de convenção sem doc citável não é emitido
-3. **Second Pass** — relê o diff inteiro e justifica, arquivo por arquivo, por que o que ficou limpo está limpo
-4. **Precision > Recall** — findings com confiança < 80% são cortados; cry wolf mata a adoção
-5. **Human-in-the-Loop** — a IA nunca aprova nem rejeita; o relatório termina oferecendo as ações a você
-6. **Rastreabilidade** — diff verificado contra os critérios do ticket/spec, item a item (✅/❌/⬜), incluindo scope creep
-7. **Meta-review** — um agente audita os achados dos outros antes de entregar: linhas inexistentes, APIs inventadas e regras sem fonte são removidas
+| # | Pilar | O que garante |
+|---|---|---|
+| ① | **Especialização** | 6 agentes focados (5 passes + meta-review), cada um com escopo e checklist próprios — um não distrai o outro |
+| ② | **Grounding** | os docs do SEU repo são carregados antes do diff; finding de convenção sem doc citável não é emitido |
+| ③ | **Second Pass** | relê o diff inteiro e justifica, arquivo por arquivo, por que o que ficou limpo está limpo |
+| ④ | **Precision > Recall** | findings com confiança < 80% são cortados; cry wolf mata a adoção (exceção: segurança vira verificação sugerida) |
+| ⑤ | **Human-in-the-Loop** | a IA nunca aprova nem rejeita; o relatório termina oferecendo as ações a você |
+| ⑥ | **Rastreabilidade** | diff verificado contra os critérios do ticket/spec, item a item (✅/❌/⬜), incluindo scope creep |
+| ⑦ | **Meta-review** | um agente audita os achados dos outros: linhas inexistentes, APIs inventadas e regras sem fonte são removidas |
 
 ## Estrutura instalada
 
