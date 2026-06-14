@@ -3,11 +3,12 @@ import { pathToFileURL } from 'node:url';
 import { init } from '../src/commands/init.js';
 import { update } from '../src/commands/update.js';
 import { doctor } from '../src/commands/doctor.js';
+import { SUPPORTED_LANGS, DEFAULT_LANG } from '../src/lib/paths.js';
 
 const USAGE = `pr-review-skill — reviews de PR confiáveis com IA
 
 Uso:
-  pr-review-skill init   [--yes] [--force] [--dir <path>]
+  pr-review-skill init   [--yes] [--force] [--lang <code>] [--dir <path>]
   pr-review-skill update [--dir <path>]
   pr-review-skill doctor [--dir <path>]
 
@@ -35,11 +36,13 @@ Comandos:
 Flags globais:
   --dir <path>   Diretório canônico da skill (default: .claude/skills/pr-review)
                  Relativo ao cwd ou absoluto.
+  --lang <code>  Idioma do relatório de review (init). Valores: ${SUPPORTED_LANGS.join(', ')}.
+                 Default: ${DEFAULT_LANG}. Sem a flag em modo interativo, o init pergunta.
   --help, -h     Mostra esta ajuda e sai (exit 0).
 `;
 
 export function parseArgs(argv) {
-  const args = { command: null, yes: false, force: false, dir: null, help: false };
+  const args = { command: null, yes: false, force: false, dir: null, lang: null, help: false };
   const rest = [...argv];
   while (rest.length > 0) {
     const arg = rest.shift();
@@ -49,6 +52,13 @@ export function parseArgs(argv) {
     else if (arg === '--dir') {
       args.dir = rest.shift() ?? null;
       if (args.dir === null) throw new Error('--dir requer um caminho');
+    } else if (arg === '--lang') {
+      const value = rest.shift() ?? null;
+      if (value === null) throw new Error('--lang requer um código de idioma');
+      if (!SUPPORTED_LANGS.includes(value)) {
+        throw new Error(`idioma inválido "${value}". Válidos: ${SUPPORTED_LANGS.join(', ')}`);
+      }
+      args.lang = value;
     } else if (!arg.startsWith('-') && args.command === null) {
       args.command = arg;
     } else {
@@ -82,7 +92,7 @@ async function main() {
     process.exit(2);
   }
 
-  const exitCode = await run({ cwd, yes: args.yes, force: args.force, dir: args.dir });
+  const exitCode = await run({ cwd, yes: args.yes, force: args.force, dir: args.dir, lang: args.lang });
   process.exit(exitCode ?? 0);
 }
 

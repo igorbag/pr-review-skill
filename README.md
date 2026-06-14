@@ -1,5 +1,7 @@
 # pr-review-skill
 
+**Português** · [English](README.en.md) · [Español](README.es.md)
+
 Reviews de PR assistidos por IA **confiáveis o suficiente para agir sobre eles** — sem o ruído de falsos positivos que destrói a confiança na ferramenta.
 
 Uma skill canônica versionada no seu repo. Funciona com **qualquer ferramenta agêntica** de código: a skill é markdown puro, agnóstico de ferramenta. Vem com adapters-ponteiro nativos para **Claude Code**, **Cursor** e **GitHub Copilot** — qualquer outro agente (Windsurf, Zed, Aider, Continue, …) é só apontar para `SKILL.md`. Baseada no framework *Os 7 Pilares do Review Confiável com IA*.
@@ -44,9 +46,32 @@ O resultado é sempre um **relatório acionável** com findings numerados (F1, F
 | Flag | Descrição |
 |---|---|
 | `--dir <path>` | Diretório canônico da skill (default: `.claude/skills/pr-review`) |
-| `--force` | Sobrescreve arquivos existentes no `init` |
+| `--force` | Sobrescreve arquivos existentes no `init` (inclui o config de idioma) |
 | `--yes` | Pula confirmação interativa (útil em CI) |
+| `--lang <code>` | Idioma do relatório (`init`): `pt-BR`, `en` ou `es`. Default `pt-BR` |
 | `--help`, `-h` | Mostra ajuda |
+
+## Idioma do review (i18n)
+
+O relatório de review é emitido no idioma escolhido para o projeto. A escolha é
+feita **uma vez, na instalação**, e fica versionada junto ao repo.
+
+- No `init` interativo, a CLI pergunta o idioma (1 = `pt-BR`, 2 = `English`, 3 = `Español`).
+- Em CI/scripts use a flag: `npx pr-review-skill init --yes --lang en`.
+- Sem flag e sem terminal interativo, o default é `pt-BR`.
+
+A escolha é gravada em `.claude/skills/pr-review/pr-review.config.json`:
+
+```json
+{ "lang": "pt-BR" }
+```
+
+Esse arquivo é seu: o `update` **nunca** o sobrescreve (igual ao `PROJECT_PROFILE.md`).
+Para mudar o idioma depois, edite o JSON à mão ou rode `init` de novo com
+`--lang <code>` (ou `--force`). O `doctor` mostra o idioma configurado.
+
+Apenas a **saída ao usuário** é traduzida — os arquivos internos da skill seguem
+em pt-BR; trechos de código, nomes de arquivo e comandos não são traduzidos.
 
 ## Como funciona
 
@@ -199,6 +224,7 @@ flowchart LR
 │   ├── relatorio.template.md
 │   └── PROJECT_PROFILE.template.md
 ├── profiling.md                 # parametrização automática do projeto
+├── pr-review.config.json        # idioma do review — seu, nunca sobrescrito
 └── PROJECT_PROFILE.md           # gerado no 1º review — seu, nunca sobrescrito
 
 .cursor/rules/pr-review.mdc                       # ponteiro → skill canônica

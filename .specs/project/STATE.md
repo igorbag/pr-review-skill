@@ -6,6 +6,10 @@
 - **D2 — Agrupamento das 12 US em 3 features:** `review-engine` (US-04…10), `project-profiling` (US-03), `installer-cli` (US-01, 02, 11, 12). Racional: review-engine é conteúdo de skill (markdown/prompts), installer é código Node; profiling é a ponte (gera o PROJECT_PROFILE.md que o engine consome).
 - **D3 — Specs em pt-BR:** acompanha o idioma de `docs/us.md`.
 - **D4 — IDs de requisito:** cada feature spec numera R1, R2… mapeados 1:1 aos critérios de aceite das US, preservando rastreabilidade US → R → task → commit.
+- **D5 — i18n persistido em config dedicado:** idioma do review fica em `<canonicalDir>/pr-review.config.json` (`{ "lang": "<code>" }`), gravado pelo `init`. Não embarcado em `skill/`; `update` preserva byte-a-byte (mesma mecânica do `PROJECT_PROFILE.md`), guard em `skillfs.js`. Racional: não quebra a invariante do profile (gerado pela IA no 1º review).
+- **D6 — i18n escopo = saída do relatório:** arquivos da skill seguem em pt-BR; `SKILL.md` instrui o orquestrador a emitir o relatório em `{{LANG}}`. Não traduzimos N cópias da skill (usuário não pediu).
+- **D7 — Idiomas suportados:** `pt-BR` (default), `en`, `es`. Flag `init --lang <code>`; inválido → exit 2.
+- **D8 — README do repo documenta i18n** (pedido explícito do usuário). Feature: `.specs/features/i18n/`.
 
 ## Questões abertas
 
