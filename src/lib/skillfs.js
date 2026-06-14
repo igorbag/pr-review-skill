@@ -1,5 +1,6 @@
 import { fileURLToPath } from 'node:url';
 import path from 'node:path';
+import fs from 'node:fs';
 
 /** Raiz do conteúdo da skill embarcado no pacote (skill/). */
 export const SKILL_SRC_DIR = path.resolve(
@@ -9,18 +10,35 @@ export const SKILL_SRC_DIR = path.resolve(
   'skill'
 );
 
+const PROFILE_FILENAME = 'PROJECT_PROFILE.md';
+
 /**
  * Lista os arquivos da skill embarcada (caminhos relativos a skill/).
- * CONTRATO (W1 implementa):
  * @returns {string[]} relpaths ordenados
  */
 export function listSkillFiles() {
-  throw new Error('not implemented');
+  /** @param {string} dir @param {string} base @returns {string[]} */
+  function walk(dir, base) {
+    if (!fs.existsSync(dir)) return [];
+    const entries = fs.readdirSync(dir, { withFileTypes: true });
+    /** @type {string[]} */
+    const results = [];
+    for (const entry of entries) {
+      const relpath = base ? path.join(base, entry.name) : entry.name;
+      if (entry.isDirectory()) {
+        results.push(...walk(path.join(dir, entry.name), relpath));
+      } else {
+        results.push(relpath);
+      }
+    }
+    return results;
+  }
+
+  return walk(SKILL_SRC_DIR, '').sort();
 }
 
 /**
  * Copia a skill embarcada para destDir.
- * CONTRATO (W1 implementa):
  * - sem force: arquivo existente no destino é pulado (idempotência, installer R3)
  * - com force: sobrescreve
  * - NUNCA escreve PROJECT_PROFILE.md (gerado em runtime pelo profiling, não embarcado)
@@ -29,5 +47,28 @@ export function listSkillFiles() {
  * @returns {{ written: string[], skipped: string[] }} relpaths
  */
 export function copySkill(destDir, opts = {}) {
-  throw new Error('not implemented');
+  const { force = false } = opts;
+  const files = listSkillFiles();
+  /** @type {string[]} */
+  const written = [];
+  /** @type {string[]} */
+  const skipped = [];
+
+  for (const relpath of files) {
+    if (path.basename(relpath) === PROFILE_FILENAME) continue;
+
+    const src = path.join(SKILL_SRC_DIR, relpath);
+    const dest = path.join(destDir, relpath);
+
+    if (!force && fs.existsSync(dest)) {
+      skipped.push(relpath);
+      continue;
+    }
+
+    fs.mkdirSync(path.dirname(dest), { recursive: true });
+    fs.copyFileSync(src, dest);
+    written.push(relpath);
+  }
+
+  return { written, skipped };
 }
