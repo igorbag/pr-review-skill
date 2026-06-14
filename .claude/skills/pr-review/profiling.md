@@ -1,7 +1,10 @@
 # Profiling — Descoberta automática de stack e docs
 
-> Execute este procedimento no **primeiro review** (quando `PROJECT_PROFILE.md` ainda não existe).
-> Ao final, grave o arquivo e nunca mais o toque — `update` não sobrescreve profiles.
+> Execute este procedimento **uma única vez**: no primeiro review, quando `PROJECT_PROFILE.md`
+> ainda não existe no diretório canônico da skill.
+> Após gerado, o profile é a **memória permanente do projeto** — evita re-descoberta
+> e economiza tokens em todos os reviews subsequentes.
+> `update` nunca o sobrescreve. Se existir, pule direto para o review.
 
 ---
 
@@ -47,15 +50,21 @@ estilo nesses casos.
 
 ## Passo 3 — Varrer e classificar documentação (R2)
 
-Varra os caminhos abaixo e classifique cada arquivo encontrado pelo papel predominante:
+**Primeiro: descubra todos os arquivos Markdown e diretórios de doc existentes.**
 
-**Caminhos a varrer:**
-- `docs/` (recursivo)
-- `README.md` / `README.rst` / `README` (raiz)
-- `CONTRIBUTING.md` / `CONTRIBUTING.rst`
-- `CHANGELOG.md` / `HISTORY.md`
-- `SECURITY.md`
-- `docs/adr/` / `docs/decisions/` / `adr/` (ADRs)
+Execute mentalmente o equivalente a:
+
+```
+find . -name "*.md" -not -path "*/node_modules/*" -not -path "*/.git/*" -not -path "*/.omc/*"
+find . -type d \( -name "doc" -o -name "docs" \) -not -path "*/node_modules/*"
+```
+
+Liste todos os arquivos `.md` encontrados e todos os diretórios `doc/` ou `docs/`. Esse
+conjunto é a fonte real — não assuma que só existem os caminhos canônicos abaixo.
+
+**Depois: classifique cada arquivo encontrado pelo papel predominante.**
+
+Caminhos adicionais a verificar (complementam o `find`):
 - `.claude/` (instruções Claude Code)
 - `.cursor/rules/` (regras Cursor)
 - `.github/instructions/` / `.github/PULL_REQUEST_TEMPLATE*` / `.github/ISSUE_TEMPLATE*`

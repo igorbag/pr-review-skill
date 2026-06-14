@@ -3,8 +3,9 @@ name: pr-review
 description: >-
   Revisa um Pull Request com 6 agentes focados ancorados nos docs do projeto,
   filtro de confiança e meta-review anti-alucinação. A saída é sempre um
-  relatório acionável — nunca uma decisão. Dispare com "review this PR",
-  "revisar PR", "revisar este PR", "review the diff", "revisar o diff".
+  relatório acionável — nunca uma decisão. Requer URL do PR como argumento.
+  Dispare com "review this PR <url>", "revisar PR <url>", "revisar este PR <url>",
+  "review the diff <url>", "revisar o diff <url>".
 ---
 
 # pr-review — orquestração

@@ -2,7 +2,7 @@
 
 Reviews de PR assistidos por IA **confiáveis o suficiente para agir sobre eles** — sem o ruído de falsos positivos que destrói a confiança na ferramenta.
 
-Uma skill canônica versionada no seu repo, com adapters para **Claude Code**, **Cursor** e **GitHub Copilot**. Baseada no framework *Os 7 Pilares do Review Confiável com IA*.
+Uma skill canônica versionada no seu repo. Funciona com **qualquer ferramenta agêntica** de código: a skill é markdown puro, agnóstico de ferramenta. Vem com adapters-ponteiro nativos para **Claude Code**, **Cursor** e **GitHub Copilot** — qualquer outro agente (Windsurf, Zed, Aider, Continue, …) é só apontar para `SKILL.md`. Baseada no framework *Os 7 Pilares do Review Confiável com IA*.
 
 ## Instalação
 
@@ -10,7 +10,9 @@ Uma skill canônica versionada no seu repo, com adapters para **Claude Code**, *
 npx pr-review-skill init
 ```
 
-Detecta as ferramentas presentes (`.claude/`, `.cursor/`, `.github/`), instala a skill canônica em `.claude/skills/pr-review/` (configurável com `--dir`) e gera adapters-ponteiro para cada ferramenta. Idempotente — rodar duas vezes não sobrescreve nada sem `--force`. Use `--yes` em CI/scripts.
+Detecta as ferramentas presentes (`.claude/`, `.cursor/`, `.github/`), instala a skill canônica em `.claude/skills/pr-review/` (configurável com `--dir`) e gera adapters-ponteiro para cada ferramenta detectada. Idempotente — rodar duas vezes não sobrescreve nada sem `--force`. Use `--yes` em CI/scripts.
+
+> **Qualquer agente.** Os adapters automáticos cobrem Claude Code, Cursor e Copilot. Para qualquer outra ferramenta agêntica, basta instruí-la a ler e seguir `.claude/skills/pr-review/SKILL.md` (ou o caminho que você definir com `--dir`) — o conteúdo da skill não depende de nenhuma ferramenta específica.
 
 Depois commite a pasta instalada. O `git log` do diretório canônico vira o histórico das regras de review do seu time.
 
@@ -47,6 +49,33 @@ O resultado é sempre um **relatório acionável** com findings numerados (F1, F
 | `--help`, `-h` | Mostra ajuda |
 
 ## Como funciona
+
+```mermaid
+flowchart TD
+    A([revisar PR &lt;url&gt;]) --> B{PROJECT_PROFILE.md<br/>existe?}
+    B -- não --> P[Profiling 1x:<br/>find *.md + docs,<br/>detecta stack/linters] --> C
+    B -- sim --> C[Grounding:<br/>carrega docs obrigatórios<br/>ANTES do diff]
+    C --> D[Identifica diff + spec vinculada]
+    D --> E[5 passes isolados, um por vez]
+
+    subgraph E1 [Passes especializados]
+        direction LR
+        F1[Correção] --> F2[Segurança] --> F3[Testes] --> F4[Spec] --> F5[Convenções]
+    end
+    E --> E1
+    E1 --> G[Second pass:<br/>relê diff inteiro,<br/>tabela de cobertura]
+    G --> H[Meta-review:<br/>audita citações,<br/>remove alucinações]
+    H --> I{Confiança ≥ 80%?}
+    I -- não --> J[Descarta<br/><i>exceto segurança →<br/>verificação sugerida</i>]
+    I -- sim --> K[Relatório acionável:<br/>F1..Fn + cobertura +<br/>saldo + ações]
+    J --> K
+    K --> L([Humano decide:<br/>aprovar / mudanças / /fix])
+
+    style A fill:#2563eb,color:#fff
+    style L fill:#16a34a,color:#fff
+    style H fill:#f59e0b,color:#000
+    style K fill:#8b5cf6,color:#fff
+```
 
 O review segue um pipeline de 7 etapas, cada uma executada por um agente isolado:
 
@@ -93,6 +122,39 @@ Findings com confiança abaixo de 80% são descartados. **Exceção deliberada:*
 Montado a partir de um template estruturado com: findings com IDs estáveis + confiança + evidência + citação de doc; tabela de cobertura; rastreabilidade da spec; saldo de auditoria; e bloco de ações ao humano (aprovar / pedir mudanças / `/detalhar F1` / `/fix F1 F3`).
 
 ## Os 7 Pilares
+
+```mermaid
+mindmap
+  root((Review<br/>Confiável<br/>com IA))
+    1. Especialização
+      6 agentes focados
+      escopo + checklist próprios
+      um não distrai o outro
+    2. Grounding
+      docs do SEU repo antes do diff
+      sem doc citável, sem finding
+      regras são SUAS, não do modelo
+    3. Second Pass
+      relê o diff inteiro
+      justifica cada arquivo limpo
+      "parece ok" é inválido
+    4. Precision > Recall
+      confiança < 80% é cortada
+      cry wolf mata a adoção
+      segurança vira verificação sugerida
+    5. Human-in-the-Loop
+      IA nunca aprova nem rejeita
+      humano decide com 👍 e /fix
+      decisão é sempre sua
+    6. Rastreabilidade
+      spec vs diff item a item
+      ✅ ❌ ⬜ com evidência
+      revisa a ENTREGA, não só o código
+    7. Meta-review
+      agente audita os achados
+      remove imports fantasma
+      IA revisando IA
+```
 
 1. **Especialização** — 6 agentes focados (5 passes + meta-review), cada um com escopo e checklist próprios
 2. **Grounding** — os docs do SEU repo são carregados antes do diff; finding de convenção sem doc citável não é emitido
