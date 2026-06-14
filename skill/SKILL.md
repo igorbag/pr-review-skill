@@ -14,7 +14,16 @@ Você é o orquestrador do review. Não revisa diff diretamente: carrega o groun
 roda os passes um a um, aplica o filtro de confiança e monta o relatório pelo template.
 A saída é **sempre um relatório** — nunca "Aprovado", "LGTM" ou "Reprovado" (R15).
 
-## 0. Pré-condição: profile (grounding)
+## 0. Pré-condição: idioma + profile (grounding)
+
+**Idioma do relatório.** Antes de tudo, leia `pr-review.config.json` no diretório
+canônico da skill (mesma pasta deste `SKILL.md`). Extraia o campo `lang`. Se o
+arquivo não existir ou for ilegível, use `pt-BR` como default. Guarde esse valor
+como `{{LANG}}` — ele define o idioma do **relatório final** (seção 7). Os
+arquivos internos da skill (passes, checklists, template) permanecem em pt-BR;
+só a saída ao usuário é traduzida.
+
+**Profile.**
 
 1. Procure `PROJECT_PROFILE.md` na raiz do repo.
 2. **Se ausente:** rode primeiro `skill/profiling.md` para gerá-lo. Não continue o review
@@ -95,7 +104,12 @@ Sobre os findings sobreviventes do meta-review:
 
 ## 7. Relatório (R15–R17)
 
-Monte o relatório usando `skill/templates/relatorio.template.md`. Ele já impõe:
+Monte o relatório usando `skill/templates/relatorio.template.md`, **escrevendo todo
+o texto voltado ao usuário em `{{LANG}}`** (lido na seção 0; default `pt-BR`):
+títulos, rótulos de seção, descrições de findings e o bloco final de ações. Preserve
+a estrutura, a ordem das seções e os IDs (F1, VS1, R1…). **Não traduza** trechos de
+código/diff, nomes de arquivo, comandos (`/fix`, `/detalhar`) nem citações literais.
+O template já impõe:
 findings com IDs estáveis F1..Fn + confiança + evidência + citação de doc; tabela de cobertura;
 seção de rastreabilidade da spec (R18–R21); saldo de auditoria (R24); e o bloco final de
 ações ao humano (R16–R17).

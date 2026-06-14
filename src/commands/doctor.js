@@ -1,6 +1,13 @@
 import fs from 'node:fs';
 import path from 'node:path';
-import { resolveCanonicalDir, ADAPTER_RELPATHS, PROFILE_FILENAME } from '../lib/paths.js';
+import {
+  resolveCanonicalDir,
+  ADAPTER_RELPATHS,
+  PROFILE_FILENAME,
+  CONFIG_FILENAME,
+  SUPPORTED_LANGS,
+  DEFAULT_LANG,
+} from '../lib/paths.js';
 import { detectTools } from '../lib/detect.js';
 
 /**
@@ -27,6 +34,18 @@ export async function doctor(opts) {
   const profilePath = path.join(canonicalDir, PROFILE_FILENAME);
   const profilePresent = fs.existsSync(profilePath);
 
+  const configPath = path.join(canonicalDir, CONFIG_FILENAME);
+  const configPresent = fs.existsSync(configPath);
+  let configLang = null;
+  if (configPresent) {
+    try {
+      const parsed = JSON.parse(fs.readFileSync(configPath, 'utf8'));
+      configLang = SUPPORTED_LANGS.includes(parsed.lang) ? parsed.lang : null;
+    } catch {
+      configLang = null;
+    }
+  }
+
   const pad = (label, width = 44) => label.padEnd(width, ' ');
   const status = (present) => (present ? 'presente' : 'ausente ');
 
@@ -41,6 +60,10 @@ export async function doctor(opts) {
   }
 
   console.log(`  ${pad('PROJECT_PROFILE.md')}${status(profilePresent)}`);
+  const langLabel = configPresent
+    ? `presente (idioma: ${configLang ?? 'inválido → ' + DEFAULT_LANG})`
+    : `ausente  (idioma: ${DEFAULT_LANG} default)`;
+  console.log(`  ${pad('Config de idioma (pr-review.config.json)')}${langLabel}`);
   console.log('');
 
   const issues = [];
@@ -73,6 +96,15 @@ export async function doctor(opts) {
       label: 'PROJECT_PROFILE.md ausente',
       next: 'Rode o primeiro review para gerar o profile automaticamente.',
     });
+  }
+
+  // Config de idioma: ausência NÃO é falha — o review usa o default (pt-BR).
+  // Já reportado na lista de status acima; aqui só uma dica quando ausente.
+  if (!configPresent) {
+    console.log(
+      `Dica: o idioma do review usará ${DEFAULT_LANG} por default. ` +
+        'Defina com "pr-review-skill init --lang <code>".\n'
+    );
   }
 
   if (issues.length > 0) {

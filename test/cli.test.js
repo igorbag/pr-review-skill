@@ -453,6 +453,88 @@ describe('doctor command', () => {
   });
 });
 
+// ─── i18n (--lang / pr-review.config.json) ──────────────────────────────────
+
+describe('i18n: idioma do review', () => {
+  let fixture;
+  const CONFIG_REL = path.join('.claude', 'skills', 'pr-review', 'pr-review.config.json');
+  const readConfig = (dir) => JSON.parse(fs.readFileSync(path.join(dir, CONFIG_REL), 'utf8'));
+
+  beforeEach(() => {
+    fixture = mktemp();
+  });
+  afterEach(() => rmtemp(fixture));
+
+  it('R1: --lang inválido sai com exit 2', () => {
+    const r = runCLI(['init', '--yes', '--lang', 'xx'], fixture);
+    assert.equal(r.code, 2);
+    assert.match(r.stderr, /inválido|pt-BR/i);
+  });
+
+  it('R1/R4: --lang en grava config com lang en', () => {
+    const r = runCLI(['init', '--yes', '--lang', 'en'], fixture);
+    assert.equal(r.code, 0, `stderr: ${r.stderr}`);
+    assert.equal(readConfig(fixture).lang, 'en');
+  });
+
+  it('R3: sem flag e não-TTY usa default pt-BR', () => {
+    const r = runCLI(['init', '--yes'], fixture);
+    assert.equal(r.code, 0, `stderr: ${r.stderr}`);
+    assert.equal(readConfig(fixture).lang, 'pt-BR');
+  });
+
+  it('R4: config existente é preservado em init sem --force nem --lang', () => {
+    runCLI(['init', '--yes', '--lang', 'es'], fixture);
+    const r = runCLI(['init', '--yes'], fixture);
+    assert.equal(r.code, 0);
+    assert.equal(readConfig(fixture).lang, 'es', 'idioma escolhido deve ser preservado');
+  });
+
+  it('R4: --lang explícito sobrescreve config existente sem --force', () => {
+    runCLI(['init', '--yes', '--lang', 'pt-BR'], fixture);
+    const r = runCLI(['init', '--yes', '--lang', 'en'], fixture);
+    assert.equal(r.code, 0);
+    assert.equal(readConfig(fixture).lang, 'en');
+  });
+
+  it('R4: config é JSON válido com newline final', () => {
+    runCLI(['init', '--yes', '--lang', 'es'], fixture);
+    const raw = fs.readFileSync(path.join(fixture, CONFIG_REL), 'utf8');
+    assert.ok(raw.endsWith('\n'), 'config deve terminar com newline');
+    assert.deepEqual(JSON.parse(raw), { lang: 'es' });
+  });
+
+  it('R6: update preserva pr-review.config.json byte-a-byte', () => {
+    const canonicalDir = path.join(fixture, '.claude', 'skills', 'pr-review');
+    fs.mkdirSync(canonicalDir, { recursive: true });
+    fs.writeFileSync(path.join(canonicalDir, 'SKILL.md'), '# skill');
+    const configContent = '{\n  "lang": "en"\n}\n';
+    fs.writeFileSync(path.join(canonicalDir, 'pr-review.config.json'), configContent);
+
+    const r = runCLI(['update'], fixture);
+    assert.equal(r.code, 0, `stderr: ${r.stderr}`);
+    const after = fs.readFileSync(path.join(canonicalDir, 'pr-review.config.json'), 'utf8');
+    assert.equal(after, configContent, 'config deve ser idêntico após update');
+  });
+
+  it('R7: doctor reporta o idioma configurado', () => {
+    runCLI(['init', '--yes', '--lang', 'en'], fixture);
+    const r = runCLI(['doctor'], fixture);
+    assert.match(r.stdout, /idioma: en/i);
+  });
+
+  it('R7: doctor mostra default quando config ausente, sem flipar exit', () => {
+    const canonicalDir = path.join(fixture, '.claude', 'skills', 'pr-review');
+    fs.mkdirSync(canonicalDir, { recursive: true });
+    fs.writeFileSync(path.join(canonicalDir, 'SKILL.md'), '# skill');
+    fs.writeFileSync(path.join(canonicalDir, 'PROJECT_PROFILE.md'), '# profile');
+
+    const r = runCLI(['doctor'], fixture);
+    assert.equal(r.code, 0, `stdout: ${r.stdout}`);
+    assert.match(r.stdout, /pt-BR/);
+  });
+});
+
 // ─── CLI top-level ────────────────────────────────────────────────────────────
 
 describe('CLI top-level', () => {

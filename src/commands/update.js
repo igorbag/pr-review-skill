@@ -2,7 +2,7 @@ import fs from 'node:fs';
 import path from 'node:path';
 import { resolveCanonicalDir } from '../lib/paths.js';
 import { copySkill } from '../lib/skillfs.js';
-import { PROFILE_FILENAME } from '../lib/paths.js';
+import { PROFILE_FILENAME, CONFIG_FILENAME } from '../lib/paths.js';
 
 /**
  * CONTRATO (W2 implementa) — installer R8–R10:
@@ -24,23 +24,23 @@ export async function update(opts) {
     return 1;
   }
 
-  // Preserve PROJECT_PROFILE.md byte-for-byte: read before copy, restore after
-  const profilePath = path.join(canonicalDir, PROFILE_FILENAME);
-  let profileContent = null;
-  let profileExists = false;
-  if (fs.existsSync(profilePath)) {
-    profileExists = true;
-    profileContent = fs.readFileSync(profilePath);
-  }
+  // Preserve arquivos gerados em runtime byte-a-byte: read before copy, restore after.
+  // PROJECT_PROFILE.md (profiling) e pr-review.config.json (idioma) seguem a mesma regra.
+  const preserved = [PROFILE_FILENAME, CONFIG_FILENAME].map((name) => {
+    const filePath = path.join(canonicalDir, name);
+    const exists = fs.existsSync(filePath);
+    return { filePath, exists, content: exists ? fs.readFileSync(filePath) : null };
+  });
 
   const result = copySkill(canonicalDir, { force: true });
 
-  // Restore PROJECT_PROFILE.md if it existed (copySkill never writes it, but be defensive)
-  if (profileExists && profileContent !== null) {
-    fs.writeFileSync(profilePath, profileContent);
-  } else if (!profileExists && fs.existsSync(profilePath)) {
-    // copySkill should never write it, but if somehow it did, remove it
-    fs.unlinkSync(profilePath);
+  // Restore se existiam (copySkill nunca os escreve, mas a restauração é defensiva)
+  for (const { filePath, exists, content } of preserved) {
+    if (exists && content !== null) {
+      fs.writeFileSync(filePath, content);
+    } else if (!exists && fs.existsSync(filePath)) {
+      fs.unlinkSync(filePath);
+    }
   }
 
   const writtenCount = result.written.length;

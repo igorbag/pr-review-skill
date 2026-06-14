@@ -11,6 +11,7 @@ export const SKILL_SRC_DIR = path.resolve(
 );
 
 const PROFILE_FILENAME = 'PROJECT_PROFILE.md';
+const CONFIG_FILENAME = 'pr-review.config.json';
 
 /**
  * Lista os arquivos da skill embarcada (caminhos relativos a skill/).
@@ -42,6 +43,7 @@ export function listSkillFiles() {
  * - sem force: arquivo existente no destino é pulado (idempotência, installer R3)
  * - com force: sobrescreve
  * - NUNCA escreve PROJECT_PROFILE.md (gerado em runtime pelo profiling, não embarcado)
+ * - NUNCA escreve pr-review.config.json (config de idioma gravado pelo init, não embarcado)
  * @param {string} destDir destino absoluto (dir canônico)
  * @param {{ force?: boolean }} [opts]
  * @returns {{ written: string[], skipped: string[] }} relpaths
@@ -56,6 +58,7 @@ export function copySkill(destDir, opts = {}) {
 
   for (const relpath of files) {
     if (path.basename(relpath) === PROFILE_FILENAME) continue;
+    if (path.basename(relpath) === CONFIG_FILENAME) continue;
 
     const src = path.join(SKILL_SRC_DIR, relpath);
     const dest = path.join(destDir, relpath);
