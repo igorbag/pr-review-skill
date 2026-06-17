@@ -1,4 +1,4 @@
-# pr-review-skill
+<img width="1024" height="506" alt="image" src="https://github.com/user-attachments/assets/b33abad1-4b82-43b2-b41d-75f816282d49" />
 
 [Português](README.md) · **English** · [Español](README.es.md)
 
