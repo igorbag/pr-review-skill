@@ -31,16 +31,21 @@
 
 <!-- Tabela de documentos relevantes encontrados no repo.
      Papel: arquitetura | convenções | segurança | testes | operações | produto | onboarding | api
-     Carga: obrigatório (carregado antes de todo diff) | sob demanda (carregado quando relevante)
+     Carga: obrigatório (carregado antes de todo diff) | sob demanda (carregado quando o diff toca o Escopo)
+     Escopo: paths/globs que o doc cobre — usado SÓ para docs `sob demanda`.
+       O review carrega o doc automaticamente quando algum arquivo do diff casa com o Escopo (R32).
+       Sem Escopo, um doc `sob demanda` não é carregado sozinho (R34). Docs `obrigatório` deixam Escopo em branco.
+       Aceita múltiplos globs separados por vírgula (ex.: `src/payments/**, internal/billing/**`).
 -->
 
-| Doc | Papel | Carga |
-|---|---|---|
-| <!-- ex.: docs/architecture.md --> | <!-- ex.: arquitetura --> | <!-- obrigatório --> |
-| <!-- ex.: CONTRIBUTING.md --> | <!-- ex.: convenções --> | <!-- obrigatório --> |
-| <!-- ex.: SECURITY.md --> | <!-- ex.: segurança --> | <!-- obrigatório --> |
-| <!-- ex.: docs/testing.md --> | <!-- ex.: testes --> | <!-- obrigatório --> |
-| <!-- ex.: CHANGELOG.md --> | <!-- ex.: produto --> | <!-- sob demanda --> |
+| Doc | Papel | Carga | Escopo |
+|---|---|---|---|
+| <!-- ex.: docs/architecture.md --> | <!-- ex.: arquitetura --> | <!-- obrigatório --> | <!-- (em branco) --> |
+| <!-- ex.: CONTRIBUTING.md --> | <!-- ex.: convenções --> | <!-- obrigatório --> | <!-- (em branco) --> |
+| <!-- ex.: SECURITY.md --> | <!-- ex.: segurança --> | <!-- obrigatório --> | <!-- (em branco) --> |
+| <!-- ex.: docs/testing.md --> | <!-- ex.: testes --> | <!-- obrigatório --> | <!-- (em branco) --> |
+| <!-- ex.: docs/payments.md --> | <!-- ex.: arquitetura --> | <!-- sob demanda --> | <!-- ex.: src/payments/**, internal/billing/** --> |
+| <!-- ex.: CHANGELOG.md --> | <!-- ex.: produto --> | <!-- sob demanda --> | <!-- ex.: (sem escopo → não auto-carrega) --> |
 
 ## Lacunas conhecidas
 

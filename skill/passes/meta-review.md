@@ -17,6 +17,10 @@ Para cada finding que cite `arquivo:linha`:
    **remove o finding** (citação fantasma). Se a linha não existir no diff → **remove o finding**.
 3. Se a linha existe mas o trecho foi parafraseado de forma imprecisa → ajuste a evidência
    para o texto real, mantendo o finding.
+4. **Âncora (R27):** o campo **Âncora** (`arquivo:linha` + lado `novo`/`antigo`/`contexto`)
+   precisa resolver numa linha **presente no diff**, do lado declarado. Se a âncora não resolve
+   (linha fora do diff, ou lado errado) → **rebaixa a pergunta ou remove** — um comentário não
+   pode ser postado num lugar que não existe no PR.
 
 ### R23 — Hallucinations de código
 

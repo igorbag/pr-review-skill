@@ -106,7 +106,7 @@ The review follows a 7-step pipeline, each step run by an isolated agent:
 
 ### 1. Grounding (before the diff)
 
-Reads `PROJECT_PROFILE.md` and loads every doc marked `obrigatório` (required) **before** looking at a single line of the diff. Convention and architecture findings can only cite those docs — no doc, no finding.
+Reads `PROJECT_PROFILE.md` and loads every doc marked `obrigatório` (required) **before** looking at a single line of the diff. Convention and architecture findings can only cite those docs — no doc, no finding. Docs marked `sob demanda` (on-demand) declare a **Scope** (paths/globs) in the profile and are loaded automatically when the diff touches that scope — becoming citable for the files they cover.
 
 ### 2. Diff and spec identification
 
@@ -144,7 +144,7 @@ Findings with confidence below 80% are discarded. **Deliberate exception:** secu
 
 ### 7. Report
 
-Built from a structured template with: findings with stable IDs + confidence + evidence + doc citation; coverage table; spec traceability; audit balance; and a block of actions for the human (approve / request changes / `/detalhar F1` / `/fix F1 F3`).
+Built from a structured template with: findings with stable IDs + **generating pillar** + confidence + evidence + **comment anchor** (`file:line` + diff side) + **suggested comment** ready to paste into the PR + doc citation; coverage table; spec traceability; audit balance; a **7-pillar coverage** checklist (attests every stage ran); and a block of actions for the human (approve / request changes / `/detalhar F1` / `/fix F1 F3`). The anchor tells you exactly **where** to post each comment — the AI delivers it, you post it.
 
 ## The 7 Pillars
 

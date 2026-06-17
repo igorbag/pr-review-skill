@@ -35,8 +35,10 @@ Para cada stack do profile, carregue `skill/checklists/<lang>.md` e aplique a se
 
 ```
 - arquivo:linha — <lacuna ou problema de teste>
+  Lado: <novo | antigo | contexto>          ← onde postar o comentário no PR (R25)
   Evidência: <trecho do diff: o que mudou sem teste / asserção enfraquecida>
   Confiança: <0–100>%
+  Comentário sugerido: <texto curto ao autor do PR, pronto p/ colar (R26)>
   Citação: <doc de testes do repo, se a regra (ex.: "todo handler precisa de teste") vier de doc obrigatório>
 ```
 
