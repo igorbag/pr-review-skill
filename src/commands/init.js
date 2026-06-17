@@ -12,6 +12,10 @@ import {
   LANG_LABELS,
 } from '../lib/paths.js';
 import { copySkill } from '../lib/skillfs.js';
+import { makeStyler, formatDuration } from '../lib/ui.js';
+
+/** Rótulos legíveis para as ferramentas detectadas. */
+const TOOL_LABELS = { claude: 'Claude Code', cursor: 'Cursor', github: 'GitHub Copilot' };
 
 /**
  * Gera o conteúdo do adapter para Cursor (.mdc).
@@ -128,6 +132,12 @@ function writeAdapter(destPath, content, force) {
 export async function init(opts) {
   const { cwd, yes, force, dir, lang: langFlag = null } = opts;
 
+  const style = makeStyler(process.stdout);
+  const startedAt = Date.now();
+  // Ícones de status: ✓ escrito, • pulado.
+  const okMark = (text) => style.green('✓') + ' ' + text;
+  const skipMark = (text) => style.gray('•') + ' ' + style.gray(text);
+
   try {
     const tools = detectTools(cwd);
     const canonicalDir = resolveCanonicalDir(cwd, dir);
@@ -138,6 +148,18 @@ export async function init(opts) {
     // Grava o config quando: ausente, OU --force, OU --lang explícito.
     // Caso contrário preserva a escolha manual já gravada.
     const writeCfg = !fs.existsSync(configPath) || force || langFlag !== null;
+
+    // Cabeçalho: onde + ferramentas detectadas
+    const repoName = path.basename(cwd) || cwd;
+    const detected = Object.keys(tools)
+      .filter((k) => tools[k])
+      .map((k) => TOOL_LABELS[k]);
+    console.log('\n' + style.bold(`Instalando pr-review-skill em ${repoName}/`));
+    if (detected.length > 0) {
+      console.log(style.dim(`Detectado: ${detected.join(', ')}`) + '\n');
+    } else {
+      console.log('');
+    }
 
     // Alvos: canônico sempre + adapters condicionais
     const targets = ['skill canônica → ' + canonicalRel];
@@ -168,48 +190,62 @@ export async function init(opts) {
       lang = writeCfg ? DEFAULT_LANG : readConfigLang(configPath);
     }
 
+    // Contadores para o resumo final.
+    let writtenCount = 0;
+    let skippedCount = 0;
+    const logWritten = (rel) => {
+      writtenCount += 1;
+      console.log('  ' + okMark(rel));
+    };
+    const logSkipped = (rel, note = 'já existe') => {
+      skippedCount += 1;
+      console.log('  ' + skipMark(`${rel} (${note})`));
+    };
+
     // 1. Copiar skill canônica
     const { written, skipped } = copySkill(canonicalDir, { force });
 
     // Garante que o diretório canônico existe mesmo quando skill/ está vazia
     fs.mkdirSync(canonicalDir, { recursive: true });
 
-    for (const f of written) console.log('  escrito: ' + path.join(canonicalRel, f));
-    for (const f of skipped) console.log('  já existe — pulado: ' + path.join(canonicalRel, f));
+    for (const f of written) logWritten(path.join(canonicalRel, f));
+    for (const f of skipped) logSkipped(path.join(canonicalRel, f));
 
     // 2. Adapters
     if (tools.cursor) {
       const destPath = path.join(cwd, ADAPTER_RELPATHS.cursor);
       const status = writeAdapter(destPath, cursorAdapter(canonicalRel), force);
-      if (status === 'written') {
-        console.log('  escrito: ' + ADAPTER_RELPATHS.cursor);
-      } else {
-        console.log('  já existe — pulado: ' + ADAPTER_RELPATHS.cursor);
-      }
+      if (status === 'written') logWritten(ADAPTER_RELPATHS.cursor);
+      else logSkipped(ADAPTER_RELPATHS.cursor);
     }
 
     if (tools.github) {
       const destPath = path.join(cwd, ADAPTER_RELPATHS.github);
       const status = writeAdapter(destPath, githubAdapter(canonicalRel), force);
-      if (status === 'written') {
-        console.log('  escrito: ' + ADAPTER_RELPATHS.github);
-      } else {
-        console.log('  já existe — pulado: ' + ADAPTER_RELPATHS.github);
-      }
+      if (status === 'written') logWritten(ADAPTER_RELPATHS.github);
+      else logSkipped(ADAPTER_RELPATHS.github);
     }
 
     // 3. Config de idioma (preserva escolha manual quando writeCfg=false)
     if (writeCfg) {
       writeConfig(configPath, lang);
-      console.log('  escrito: ' + configRel + ` (idioma: ${lang})`);
+      logWritten(configRel + ` (idioma: ${lang})`);
     } else {
-      console.log('  já existe — pulado: ' + configRel + ` (idioma: ${lang})`);
+      logSkipped(configRel + ` (idioma: ${lang})`, 'preservado');
     }
 
-    // 4. Próximos passos
-    console.log(`
-Próximos passos:
-  1. Commite os novos arquivos:
+    // 4. Bloco-resumo: local, idioma, contagem, tempo
+    const langLabel = LANG_LABELS[lang] ?? lang;
+    const elapsed = formatDuration(Date.now() - startedAt);
+    console.log('');
+    console.log('  ' + style.bold('Local:  ') + ' ' + canonicalRel);
+    console.log('  ' + style.bold('Idioma: ') + ' ' + `${langLabel} (${lang})`);
+    console.log('  ' + style.bold('Arquivos:') + ' ' + `${writtenCount} escritos, ${skippedCount} pulados`);
+    console.log('  ' + style.bold('Tempo:  ') + ' ' + elapsed);
+
+    // 5. Próximos passos
+    console.log('\n' + style.green('Pronto.') + ' Próximos passos:');
+    console.log(`  1. Commite os novos arquivos:
        git add ${canonicalRel} && git commit -m "chore: instala pr-review-skill"
   2. Peça o primeiro review na sua ferramenta de IA (Claude Code, Cursor ou Copilot):
        "revise este PR"

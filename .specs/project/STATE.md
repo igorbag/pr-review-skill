@@ -10,6 +10,7 @@
 - **D6 — i18n escopo = saída do relatório:** arquivos da skill seguem em pt-BR; `SKILL.md` instrui o orquestrador a emitir o relatório em `{{LANG}}`. Não traduzimos N cópias da skill (usuário não pediu).
 - **D7 — Idiomas suportados:** `pt-BR` (default), `en`, `es`. Flag `init --lang <code>`; inválido → exit 2.
 - **D8 — README do repo documenta i18n** (pedido explícito do usuário). Feature: `.specs/features/i18n/`.
+- **D9 — init-ux só apresentação:** feature `init-ux` (`.specs/features/init-ux/`) muda apenas a saída do `init` — cabeçalho com local + ferramentas detectadas, ícones ✓/• por arquivo, bloco-resumo Local/Idioma/Arquivos/Tempo. Zero mudança em quais arquivos são escritos, idempotência ou config. Cores ANSI via novo helper `src/lib/ui.js`, ligadas só quando `stdout.isTTY` e `NO_COLOR` ausente. Estilo escolhido pelo usuário: cores+ícones, com contagem de arquivos, tempo e lista de ferramentas.
 
 ## Questões abertas
 
