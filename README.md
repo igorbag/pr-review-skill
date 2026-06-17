@@ -1,5 +1,7 @@
 # pr-review-skill
 
+<img width="1024" height="506" alt="image" src="https://github.com/user-attachments/assets/b33abad1-4b82-43b2-b41d-75f816282d49" />
+
 **Português** · [English](README.en.md) · [Español](README.es.md)
 
 Reviews de PR assistidos por IA **confiáveis o suficiente para agir sobre eles** — sem o ruído de falsos positivos que destrói a confiança na ferramenta.
