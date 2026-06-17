@@ -1,5 +1,17 @@
 <img width="1024" height="506" alt="image" src="https://github.com/user-attachments/assets/b33abad1-4b82-43b2-b41d-75f816282d49" />
 
+<p align="center">
+    <a href="https://www.npmjs.com/package/pr-review-skill" alt="npm version">
+        <img src="https://img.shields.io/npm/v/pr-review-skill?logo=npm" /></a>
+    <a href="https://www.npmjs.com/package/pr-review-skill" alt="npm downloads">
+        <img src="https://img.shields.io/npm/dm/pr-review-skill" /></a>
+    <a href="https://github.com/igorbag/pr-review-skill/releases" alt="Latest release">
+        <img src="https://img.shields.io/github/v/tag/igorbag/pr-review-skill?label=release" /></a>
+    <a href="https://github.com/igorbag/pr-review-skill/blob/main/LICENSE" alt="License">
+        <img src="https://img.shields.io/npm/l/pr-review-skill" /></a>
+    <img src="https://img.shields.io/node/v/pr-review-skill" alt="Node version" />
+</p>
+
 [Português](README.md) · [English](README.en.md) · **Español**
 
 Revisiones de PR asistidas por IA **lo bastante fiables como para actuar sobre ellas** — sin el ruido de falsos positivos que destruye la confianza en la herramienta.
