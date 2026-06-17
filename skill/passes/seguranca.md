@@ -25,7 +25,7 @@ responder. Por isso, sempre formule a pergunta junto do finding (ver formato).
 
 ## Consulte a checklist da linguagem (R8)
 
-Para cada stack do profile, carregue `skill/checklists/<lang>.md` e aplique a seção de
+Para cada stack do profile, carregue `checklists/<lang>.md` e aplique a seção de
 segurança específica da linguagem/framework (ex.: queries cruas, render sem escape, exec).
 
 ## Rubrica de confiança (0–100%)

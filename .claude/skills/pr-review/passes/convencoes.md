@@ -26,7 +26,7 @@ a regra**. Sem doc citável, o item vira **no máximo uma pergunta** ao humano �
 
 ## Consulte a checklist da linguagem (R8)
 
-Para cada stack do profile, carregue `skill/checklists/<lang>.md` — mas use-a só para
+Para cada stack do profile, carregue `checklists/<lang>.md` — mas use-a só para
 **armadilhas objetivas**; aderência a convenção continua exigindo citação de doc do repo.
 
 ## Rubrica de confiança (0–100%)

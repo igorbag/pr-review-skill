@@ -1,11 +1,6 @@
 ---
 name: pr-review
-description: >-
-  Revisa um Pull Request com 6 agentes focados ancorados nos docs do projeto,
-  filtro de confiança e meta-review anti-alucinação. A saída é sempre um
-  relatório acionável — nunca uma decisão. Requer URL do PR como argumento.
-  Dispare com "review this PR <url>", "revisar PR <url>", "revisar este PR <url>",
-  "review the diff <url>", "revisar o diff <url>".
+description: 'Revisa um Pull Request com 6 agentes focados ancorados nos docs do projeto, filtro de confiança e meta-review anti-alucinação. A saída é sempre um relatório acionável — nunca uma decisão. Requer URL do PR como argumento. Dispare com "review this PR <url>", "revisar PR <url>", "revisar este PR <url>", "review the diff <url>", "revisar o diff <url>".'
 ---
 
 # pr-review — orquestração
@@ -13,6 +8,33 @@ description: >-
 Você é o orquestrador do review. Não revisa diff diretamente: carrega o grounding,
 roda os passes um a um, aplica o filtro de confiança e monta o relatório pelo template.
 A saída é **sempre um relatório** — nunca "Aprovado", "LGTM" ou "Reprovado" (R15).
+
+> **Caminhos internos.** Todo caminho de arquivo da skill citado abaixo
+> (`passes/…`, `checklists/…`, `templates/…`, `profiling.md`) é **relativo ao
+> diretório deste `SKILL.md`** — ou seja, ao diretório canônico da skill
+> (`.claude/skills/pr-review/` por padrão, ou o que foi definido com `--dir`).
+> Não os interprete como relativos à raiz do repo.
+
+## Os 7 Pilares (referência canônica)
+
+Toda etapa do review e todo finding se ancoram nestes pilares. Use esta legenda
+ao preencher o campo **pilar** de um finding (R28) e a seção **Cobertura dos 7
+pilares** do relatório (R29–R30).
+
+| # | Pilar | Tipo | O que garante |
+|---|---|---|---|
+| ① | **Especialização** | gerador | 6 agentes focados (5 passes + meta-review), cada um com escopo e checklist próprios |
+| ② | **Grounding** | gerador | docs do repo carregados antes do diff; convenção sem doc citável não vira finding |
+| ③ | **Second Pass** | processo | relê o diff inteiro; justifica cada arquivo limpo |
+| ④ | **Precision > Recall** | filtro | corta findings com confiança < 80% (exceto segurança → verificação sugerida) |
+| ⑤ | **Human-in-the-Loop** | processo | a IA nunca aprova nem rejeita; entrega ações ao humano |
+| ⑥ | **Rastreabilidade** | gerador | diff verificado contra a spec/ticket item a item (✅/❌/⬜) |
+| ⑦ | **Meta-review** | processo | um agente audita os achados dos outros e remove alucinações |
+
+**Pilares geradores de finding** (campo **pilar** de F1..Fn): só ① (Correção,
+Segurança, Testes), ② (Convenções ancorada em doc) e ⑥ (Spec). ④ é um **filtro**,
+não gera finding — nunca o use como pilar de um finding. ③⑤⑦ são pilares de
+**processo**: aparecem só na seção de cobertura, atestando que a etapa rodou.
 
 ## 0. Pré-condição: idioma + profile (grounding)
 
@@ -26,7 +48,7 @@ só a saída ao usuário é traduzida.
 **Profile.**
 
 1. Procure `PROJECT_PROFILE.md` na raiz do repo.
-2. **Se ausente:** rode primeiro `skill/profiling.md` para gerá-lo. Não continue o review
+2. **Se ausente:** rode primeiro `profiling.md` para gerá-lo. Não continue o review
    sem profile — ele é o contrato que define stack, linters e docs. Após gerado, siga.
 3. **Se presente:** leia-o por inteiro. Dele extraia:
    - **Stack(s)** → quais checklists de linguagem carregar nos passes (R8).
@@ -78,13 +100,13 @@ e só então passe ao próximo. Um passe nunca distrai o outro.
 
 Ordem e arquivos:
 
-1. **Correção** → `skill/passes/correcao.md`
-2. **Segurança** → `skill/passes/seguranca.md`
-3. **Testes** → `skill/passes/testes.md`
-4. **Spec** → `skill/passes/spec.md` *(só se há spec vinculada; senão ⬜ "não verificável", R7)*
-5. **Convenções** → `skill/passes/convencoes.md`
+1. **Correção** → `passes/correcao.md`
+2. **Segurança** → `passes/seguranca.md`
+3. **Testes** → `passes/testes.md`
+4. **Spec** → `passes/spec.md` *(só se há spec vinculada; senão ⬜ "não verificável", R7)*
+5. **Convenções** → `passes/convencoes.md`
 
-Cada passe recebe: o diff, a stack do profile (para escolher `skill/checklists/<lang>.md`, R8),
+Cada passe recebe: o diff, a stack do profile (para escolher `checklists/<lang>.md`, R8),
 a lista de linters/formatters a suprimir (R4) e os docs carregados — obrigatórios (seção 1) +
 `sob demanda` ativados por escopo (seção 2.1, R33).
 
@@ -109,7 +131,7 @@ primeira leitura no passe de spec não é final (R19).
 
 ## 5. Meta-review — audita citações e alucinações (R22–R24)
 
-Carregue `skill/passes/meta-review.md` e rode sobre **todos os findings candidatos** acumulados:
+Carregue `passes/meta-review.md` e rode sobre **todos os findings candidatos** acumulados:
 
 - Toda citação `arquivo:linha` é reconferida contra o diff real (R22).
 - Import fantasma / assinatura inventada / dead code sem confirmação de chamador →
@@ -129,7 +151,7 @@ Sobre os findings sobreviventes do meta-review:
 
 ## 7. Relatório (R15–R17)
 
-Monte o relatório usando `skill/templates/relatorio.template.md`, **escrevendo todo
+Monte o relatório usando `templates/relatorio.template.md`, **escrevendo todo
 o texto voltado ao usuário em `{{LANG}}`** (lido na seção 0; default `pt-BR`):
 títulos, rótulos de seção, descrições de findings e o bloco final de ações. Preserve
 a estrutura, a ordem das seções e os IDs (F1, VS1, R1…). **Não traduza** trechos de

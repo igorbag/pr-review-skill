@@ -15,7 +15,7 @@
 ### F1 — <título curto do finding>
 
 - **Passe:** <Correção | Segurança | Testes | Spec | Convenções>
-- **Pilar:** <① Especialização | ② Grounding | ④ Precision | ⑥ Rastreabilidade> <!-- pilar gerador, R28 -->
+- **Pilar:** <① Especialização | ② Grounding | ⑥ Rastreabilidade> <!-- pilar gerador, R28 — ④/③/⑤/⑦ NÃO geram finding -->
 - **Âncora:** `<arquivo>:<linha>` — lado: <novo | antigo | contexto> <!-- onde postar o comentário no PR, R25 -->
 - **Confiança:** <80–100>%
 - **Evidência:**

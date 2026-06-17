@@ -24,8 +24,8 @@ Defeitos que fazem o código produzir resultado errado ou quebrar em runtime:
 
 ## Consulte a checklist da linguagem (R8)
 
-Para **cada stack** listada no profile, carregue e aplique `skill/checklists/<lang>.md`
-(ex.: `skill/checklists/go.md`, `skill/checklists/kotlin.md`, `skill/checklists/python.md`).
+Para **cada stack** listada no profile, carregue e aplique `checklists/<lang>.md`
+(ex.: `checklists/go.md`, `checklists/kotlin.md`, `checklists/python.md`).
 Ela enumera armadilhas específicas (err ignorado em Go, `!!` em Kotlin, `except: pass` em
 Python, …). Em monorepo, use a checklist do módulo a que o arquivo pertence.
 

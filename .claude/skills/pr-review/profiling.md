@@ -120,7 +120,7 @@ Nunca envie mais de uma mensagem de pergunta. Se tudo foi inferível, pule este 
 ## Passo 5 — Gerar `PROJECT_PROFILE.md` (R4 e R5)
 
 Grave o arquivo em `<diretório canônico da skill>/PROJECT_PROFILE.md` usando o template
-em `skill/templates/PROJECT_PROFILE.template.md`.
+em `templates/PROJECT_PROFILE.template.md`.
 
 Regras de preenchimento:
 - Cada doc listado recebe `obrigatório` ou `sob demanda` na coluna **Carga**.

@@ -213,6 +213,23 @@ flowchart LR
 | ⑥ | **Rastreabilidade** | diff verificado contra os critérios do ticket/spec, item a item (✅/❌/⬜), incluindo scope creep |
 | ⑦ | **Meta-review** | um agente audita os achados dos outros: linhas inexistentes, APIs inventadas e regras sem fonte são removidas |
 
+### Glossário (em português claro)
+
+Os pilares têm nomes técnicos em inglês. Em palavras simples:
+
+| Termo | Em português claro |
+|---|---|
+| **Finding** | Um **apontamento** do review: um problema específico encontrado no código, com local exato (`arquivo:linha`), evidência e um comentário pronto pra colar no PR. É numerado (F1, F2 …). A IA só apura apontamentos — quem decide o que fazer é você. |
+| ① **Especialização** | Em vez de uma IA olhar tudo de uma vez, são **vários revisores separados**, cada um cuidando só de um assunto (bug, segurança, teste…). Um não atrapalha o outro. |
+| ② **Grounding** | "Ancoragem". A IA lê **a documentação do SEU repositório antes** de olhar o código, e só aponta violação de regra que esteja **escrita num doc seu** — não inventa "boa prática" genérica. |
+| ③ **Second Pass** | "Segunda leitura". Depois dos revisores, a IA **relê o diff inteiro** e justifica, arquivo por arquivo, por que cada um que ficou sem apontamento está realmente ok. Proíbe o "parece ok". |
+| ④ **Precision > Recall** | "Precisão acima de cobertura". Prefere **falar menos e acertar** do que apontar muita coisa errada. Apontamento com menos de 80% de certeza é cortado — alarme falso destrói a confiança na ferramenta. (Exceção: suspeita de segurança não some, vira "verificação sugerida".) |
+| ⑤ **Human-in-the-Loop** | "Humano no controle". A IA **nunca aprova nem reprova** o PR. Ela entrega o relatório e as opções; **a decisão é sempre sua**. |
+| ⑥ **Rastreabilidade** | Confere se o código **entregou o que o ticket/spec pediu**, requisito por requisito (✅ feito / ❌ faltou / ⬜ não dá pra verificar), e sinaliza mudança extra que ninguém pediu (*scope creep*). |
+| ⑦ **Meta-review** | "Revisão da revisão". Um último agente **audita os apontamentos dos outros** e remove os inventados: linha que não existe no diff, função imaginada, regra sem fonte. É a IA revisando a própria IA. |
+
+> **Diff** = o conjunto de linhas que o PR adiciona/remove. · **Spec/ticket** = a tarefa que descreve o que o PR deveria fazer. · **Lockfile** = arquivo gerado automaticamente (ex.: `package-lock.json`) — marcado como "não revisado".
+
 ## Estrutura instalada
 
 ```
