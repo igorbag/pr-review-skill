@@ -1,6 +1,6 @@
 {
   "name": "pr-review-skill",
-  "version": "1.2.0",
+  "version": "1.2.1",
   "description": "Reviews de PR assistidos por IA confiáveis — skill canônica versionada no repo, com adapters para Claude Code, Cursor e Copilot",
   "type": "module",
   "bin": {
