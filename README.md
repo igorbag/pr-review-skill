@@ -106,7 +106,7 @@ O review segue um pipeline de 7 etapas, cada uma executada por um agente isolado
 
 ### 1. Grounding (antes do diff)
 
-Lê o `PROJECT_PROFILE.md` e carrega todos os docs marcados como `obrigatório` **antes** de olhar uma única linha do diff. Findings de convenção e arquitetura só podem citar esses docs — sem doc, sem finding.
+Lê o `PROJECT_PROFILE.md` e carrega todos os docs marcados como `obrigatório` **antes** de olhar uma única linha do diff. Findings de convenção e arquitetura só podem citar esses docs — sem doc, sem finding. Docs marcados `sob demanda` declaram um **Escopo** (paths/globs) no profile e são carregados automaticamente quando o diff toca esse escopo — tornando-se citáveis para os arquivos que cobrem.
 
 ### 2. Identificação do diff e spec
 
@@ -144,7 +144,7 @@ Findings com confiança abaixo de 80% são descartados. **Exceção deliberada:*
 
 ### 7. Relatório
 
-Montado a partir de um template estruturado com: findings com IDs estáveis + confiança + evidência + citação de doc; tabela de cobertura; rastreabilidade da spec; saldo de auditoria; e bloco de ações ao humano (aprovar / pedir mudanças / `/detalhar F1` / `/fix F1 F3`).
+Montado a partir de um template estruturado com: findings com IDs estáveis + **pilar gerador** + confiança + evidência + **âncora de comentário** (`arquivo:linha` + lado do diff) + **comentário sugerido** pronto para colar no PR + citação de doc; tabela de cobertura; rastreabilidade da spec; saldo de auditoria; uma checklist de **cobertura dos 7 pilares** (atesta que cada etapa rodou); e bloco de ações ao humano (aprovar / pedir mudanças / `/detalhar F1` / `/fix F1 F3`). A âncora diz exatamente **onde** postar cada comentário — a IA entrega, você posta.
 
 ## Os 7 Pilares
 

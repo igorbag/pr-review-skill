@@ -42,8 +42,10 @@ Finding com confiança ≥ 80%:
 
 ```
 - arquivo:linha — <vulnerabilidade>
+  Lado: <novo | antigo | contexto>          ← onde postar o comentário no PR (R25)
   Evidência: <trecho do diff: fonte → sink>
   Confiança: <80–100>%
+  Comentário sugerido: <texto curto ao autor do PR, pronto p/ colar (R26)>
   Citação: <doc de segurança do repo, se a regra vier de um doc obrigatório>
 ```
 
@@ -51,6 +53,7 @@ Suspeita com confiança < 80% (desvio D1):
 
 ```
 - arquivo:linha — [verificação sugerida] <suspeita>
+  Lado: <novo | antigo | contexto>          ← onde está a linha suspeita no PR (R25)
   Evidência: <o que viu no diff>
   Confiança: <0–79>%
   Pergunta a responder: <pergunta exata que confirmaria/descartaria — ex.:

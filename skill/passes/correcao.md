@@ -43,8 +43,10 @@ Para cada finding:
 
 ```
 - arquivo:linha — <descrição do defeito>
+  Lado: <novo | antigo | contexto>          ← onde postar o comentário no PR (R25)
   Evidência: <trecho real do diff que comprova>
   Confiança: <0–100>%
+  Comentário sugerido: <texto curto ao autor do PR, pronto p/ colar (R26)>
 ```
 
 Citação de doc **não** é exigida para correção (é defeito objetivo, não convenção). Se o

@@ -15,13 +15,16 @@
 ### F1 — <título curto do finding>
 
 - **Passe:** <Correção | Segurança | Testes | Spec | Convenções>
-- **Arquivo:linha:** `<arquivo>:<linha>`
+- **Pilar:** <① Especialização | ② Grounding | ④ Precision | ⑥ Rastreabilidade> <!-- pilar gerador, R28 -->
+- **Âncora:** `<arquivo>:<linha>` — lado: <novo | antigo | contexto> <!-- onde postar o comentário no PR, R25 -->
 - **Confiança:** <80–100>%
 - **Evidência:**
   ```
   <trecho real do diff>
   ```
 - **Descrição:** <o que está errado e por quê>
+- **Comentário sugerido:** <!-- texto pronto p/ colar no PR, em {{LANG}}, dirigido ao autor; sem veredito (R26) -->
+  > <comentário curto e acionável ao autor do PR>
 - **Citação:** <doc do repo + seção — obrigatório para Convenções; opcional para os demais>
 
 <!-- Repita o bloco para F2, F3, … -->
@@ -82,6 +85,25 @@
 ## Saldo de auditoria (meta-review)
 
 <N> findings auditados, <M> removidos (<motivos>), <P> rebaixados a pergunta.
+
+---
+
+## Cobertura dos 7 pilares
+
+<!-- Atesta que cada etapa rodou, com a evidência já produzida acima.
+     NÃO invente comentário para os pilares de processo (③⑤⑦) — só confirme que ocorreram (R29–R30).
+     Pilar não aplicável (ex.: ⑥ sem spec vinculada) → ⬜ com motivo.
+-->
+
+| # | Pilar | Status | Evidência |
+|---|---|---|---|
+| ① | Especialização | ✅ | <ex.: 5 passes rodados, um por vez> |
+| ② | Grounding | ✅ | <ex.: 3 docs obrigatórios + docs sob demanda ativados: `docs/payments.md` ← `src/payments/x.js`> |
+| ③ | Second Pass | ✅ | <ex.: tabela de cobertura com todos os N arquivos do diff> |
+| ④ | Precision > Recall | ✅ | <ex.: 2 findings cortados <80%; 1 virou verificação sugerida> |
+| ⑤ | Human-in-the-Loop | ✅ | <ex.: bloco de ações ao humano presente; nenhum veredito emitido> |
+| ⑥ | Rastreabilidade | <✅ \| ⬜> | <ex.: spec verificada item a item / ⬜ sem spec vinculada> |
+| ⑦ | Meta-review | ✅ | <ex.: N auditados, M removidos — ver saldo acima> |
 
 ---
 

@@ -89,6 +89,18 @@ Caminhos adicionais a verificar (complementam o `find`):
 - Se houver menos de 7 docs relevantes → registre em "Lacunas conhecidas" os papéis
   ausentes; marque os existentes conforme julgamento.
 
+**Escopo dos docs `sob demanda` (R31, R34):** para cada doc que você marcar `sob demanda`,
+determine os **paths/globs que ele cobre** e registre na coluna **Escopo** do profile. Use
+sinais do próprio doc (títulos, caminhos citados, módulo descrito) e da estrutura do repo:
+
+- Doc sobre um módulo/área específica → glob desse módulo (ex.: `docs/payments.md` → `src/payments/**`).
+- Doc de API de um serviço → path do serviço (ex.: `openapi/orders.yaml` → `services/orders/**`).
+- Vários módulos → globs separados por vírgula.
+
+Se não der para determinar um escopo confiável, **deixe o Escopo em branco** — o doc só será
+carregado se um passe pedir explicitamente; ele **não** entra na carga automática (R34). Não
+invente um escopo amplo demais (`**`) só para forçar carga: isso anula o ganho de tokens do `sob demanda`.
+
 ---
 
 ## Passo 4 — Perguntar ao usuário (R3)
@@ -112,6 +124,8 @@ em `skill/templates/PROJECT_PROFILE.template.md`.
 
 Regras de preenchimento:
 - Cada doc listado recebe `obrigatório` ou `sob demanda` na coluna **Carga**.
+- Doc `sob demanda` recebe a coluna **Escopo** (paths/globs que ele cobre); `obrigatório` deixa
+  Escopo em branco. Doc `sob demanda` sem Escopo não entra na carga automática (R34).
 - Papéis sem nenhum doc no repositório vão para **Lacunas conhecidas** — nunca bloqueiam
   o uso.
 - O arquivo deve ser legível em `git diff` e editável à mão pelo Tech Lead.

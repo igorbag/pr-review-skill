@@ -40,10 +40,15 @@ Para cada stack do profile, carregue `skill/checklists/<lang>.md` — mas use-a 
 
 ```
 - arquivo:linha — <violação de convenção/arquitetura>
+  Lado: <novo | antigo | contexto>          ← onde postar o comentário no PR (R25)
   Evidência: <trecho do diff que viola>
   Confiança: <80–100>%
+  Comentário sugerido: <texto curto ao autor do PR, pronto p/ colar (R26)>
   Citação: <doc do repo + seção/linha que estabelece a regra>   ← OBRIGATÓRIA neste passe (R3)
 ```
+
+Doc `sob demanda` ativado por escopo (seção 2.1 do SKILL) vale como citação aqui, mas só
+para os arquivos cobertos pelo Escopo dele (R33).
 
 Sem o campo **Citação** preenchido com um doc obrigatório real do repo, **não emita o finding**:
 registre como pergunta ao humano (ex.: "Existe convenção documentada para a localização de X?").

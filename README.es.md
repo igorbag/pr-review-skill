@@ -106,7 +106,7 @@ La revisión sigue un pipeline de 7 etapas, cada una ejecutada por un agente ais
 
 ### 1. Grounding (antes del diff)
 
-Lee el `PROJECT_PROFILE.md` y carga todos los docs marcados como `obrigatório` (obligatorio) **antes** de mirar una sola línea del diff. Los findings de convención y arquitectura solo pueden citar esos docs — sin doc, sin finding.
+Lee el `PROJECT_PROFILE.md` y carga todos los docs marcados como `obrigatório` (obligatorio) **antes** de mirar una sola línea del diff. Los findings de convención y arquitectura solo pueden citar esos docs — sin doc, sin finding. Los docs marcados `sob demanda` (bajo demanda) declaran un **Alcance** (paths/globs) en el profile y se cargan automáticamente cuando el diff toca ese alcance — volviéndose citables para los archivos que cubren.
 
 ### 2. Identificación del diff y la spec
 
@@ -144,7 +144,7 @@ Los findings con confianza por debajo del 80% se descartan. **Excepción deliber
 
 ### 7. Informe
 
-Construido a partir de una plantilla estructurada con: findings con IDs estables + confianza + evidencia + cita de doc; tabla de cobertura; trazabilidad de la spec; balance de auditoría; y un bloque de acciones para el humano (aprobar / pedir cambios / `/detalhar F1` / `/fix F1 F3`).
+Construido a partir de una plantilla estructurada con: findings con IDs estables + **pilar generador** + confianza + evidencia + **ancla de comentario** (`archivo:línea` + lado del diff) + **comentario sugerido** listo para pegar en el PR + cita de doc; tabla de cobertura; trazabilidad de la spec; balance de auditoría; una checklist de **cobertura de los 7 pilares** (certifica que cada etapa corrió); y un bloque de acciones para el humano (aprobar / pedir cambios / `/detalhar F1` / `/fix F1 F3`). El ancla dice exactamente **dónde** publicar cada comentario — la IA lo entrega, tú lo publicas.
 
 ## Los 7 Pilares
 
