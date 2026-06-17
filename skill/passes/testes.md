@@ -21,7 +21,7 @@ arquivo, emite findings candidatos, devolve o controle.
 
 ## Consulte a checklist da linguagem (R8)
 
-Para cada stack do profile, carregue `skill/checklists/<lang>.md` e aplique a seção de testes
+Para cada stack do profile, carregue `checklists/<lang>.md` e aplique a seção de testes
 (framework de teste do projeto, padrões de mock, convenção de nome/arquivo de teste).
 
 ## Rubrica de confiança (0–100%)
