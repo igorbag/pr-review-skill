@@ -560,3 +560,95 @@ describe('CLI top-level', () => {
     assert.equal(r.code, 2);
   });
 });
+
+// ─── init-ux: saída intuitiva do init ────────────────────────────────────────
+
+describe('init-ux: saída do init', () => {
+  let fixture;
+  beforeEach(() => {
+    fixture = mktemp();
+    fs.mkdirSync(path.join(fixture, '.claude'));
+    fs.mkdirSync(path.join(fixture, '.cursor'));
+  });
+  afterEach(() => rmtemp(fixture));
+
+  it('R1: cabeçalho mostra onde instala + ferramentas detectadas', () => {
+    const r = runCLI(['init', '--yes'], fixture);
+    assert.equal(r.code, 0, `stderr: ${r.stderr}`);
+    assert.match(r.stdout, /Instalando pr-review-skill em/);
+    assert.match(r.stdout, /Detectado:.*Claude Code/);
+    assert.match(r.stdout, /Cursor/);
+  });
+
+  it('R2: arquivos escritos usam ícone ✓', () => {
+    const r = runCLI(['init', '--yes'], fixture);
+    assert.match(r.stdout, /✓ .*SKILL\.md/);
+  });
+
+  it('R2: segunda execução marca pulados com •', () => {
+    runCLI(['init', '--yes'], fixture);
+    const r = runCLI(['init', '--yes'], fixture);
+    assert.match(r.stdout, /• .*SKILL\.md \(já existe\)/);
+  });
+
+  it('R3: NO_COLOR → saída sem códigos ANSI', () => {
+    // runCLI já força NO_COLOR=1
+    const r = runCLI(['init', '--yes'], fixture);
+    assert.ok(!r.stdout.includes('\x1b['), 'não deve conter escapes ANSI');
+  });
+
+  it('R4: resumo final traz Local, Idioma, Arquivos e Tempo', () => {
+    const r = runCLI(['init', '--yes', '--lang', 'en'], fixture);
+    assert.match(r.stdout, /Local:\s+\.claude\/skills\/pr-review/);
+    assert.match(r.stdout, /Idioma:\s+English \(en\)/);
+    assert.match(r.stdout, /Arquivos:\s+\d+ escritos, \d+ pulados/);
+    assert.match(r.stdout, /Tempo:\s+\d+(\.\d+)?(ms|s)/);
+  });
+
+  it('R4: contagem reflete 0 escritos na reexecução', () => {
+    runCLI(['init', '--yes'], fixture);
+    const r = runCLI(['init', '--yes'], fixture);
+    assert.match(r.stdout, /Arquivos:\s+0 escritos, \d+ pulados/);
+  });
+
+  it('R5: próximos passos preservados', () => {
+    const r = runCLI(['init', '--yes'], fixture);
+    assert.match(r.stdout, /git add/);
+    assert.match(r.stdout, /revise este PR/i);
+  });
+});
+
+// ─── ui.js: helper de cor ────────────────────────────────────────────────────
+
+describe('ui: makeStyler / formatDuration', () => {
+  let makeStyler, formatDuration;
+  before(async () => {
+    ({ makeStyler, formatDuration } = await import('../src/lib/ui.js'));
+  });
+
+  it('TTY sem NO_COLOR emite escapes ANSI', () => {
+    const saved = process.env.NO_COLOR;
+    delete process.env.NO_COLOR;
+    const s = makeStyler({ isTTY: true });
+    assert.ok(s.green('x').includes('\x1b['), 'deve conter escape');
+    if (saved !== undefined) process.env.NO_COLOR = saved;
+  });
+
+  it('NO_COLOR força texto puro mesmo em TTY', () => {
+    const saved = process.env.NO_COLOR;
+    process.env.NO_COLOR = '1';
+    const s = makeStyler({ isTTY: true });
+    assert.equal(s.green('x'), 'x');
+    if (saved === undefined) delete process.env.NO_COLOR;
+  });
+
+  it('stream não-TTY → texto puro', () => {
+    const s = makeStyler({ isTTY: false });
+    assert.equal(s.bold('x'), 'x');
+  });
+
+  it('formatDuration: ms abaixo de 1s, s acima', () => {
+    assert.equal(formatDuration(7), '7ms');
+    assert.equal(formatDuration(1300), '1.3s');
+  });
+});
