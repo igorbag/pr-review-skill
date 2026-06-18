@@ -5,6 +5,28 @@
 
 ---
 
+## TL;DR — Risco de impacto
+
+**Risco geral do PR:** <🔴 Alto | 🟡 Médio | 🟢 Baixo>
+
+<!-- = maior risco entre os findings sobreviventes; sem findings → 🟢 Baixo (R35).
+     Escolha UMA linha de orientação conforme o risco geral: -->
+> 🔴 **Alto** — revisão humana cuidadosa recomendada antes do merge.
+> 🟡 **Médio** — vale ler os findings apontados antes de decidir.
+> 🟢 **Baixo** — nada relevante encontrado; a seu critério, a revisão pode ser leve ou dispensável.
+
+| Risco | Findings |
+|---|---|
+| 🔴 Alto | <nº> (<ex.: F1, F4>) |
+| 🟡 Médio | <nº> (<ex.: F2>) |
+| 🟢 Baixo | <nº> (<ex.: F3>) |
+
+<!-- Se risco geral é 🟢 Baixo MAS o diff tocou paths sensíveis (auth, pagamentos,
+     migrations) sem gerar finding, registre como nota — Baixo não é "ignore": -->
+> **Nota:** <ex.: o diff altera `src/auth/session.js`; nenhum finding, mas confira você mesmo se for crítico.>
+
+---
+
 ## Findings
 
 <!-- Findings após meta-review e filtro de confiança ≥ 80%.
@@ -16,6 +38,7 @@
 
 - **Passe:** <Correção | Segurança | Testes | Spec | Convenções>
 - **Pilar:** <① Especialização | ② Grounding | ⑥ Rastreabilidade> <!-- pilar gerador, R28 — ④/③/⑤/⑦ NÃO geram finding -->
+- **Risco de impacto:** <🔴 Alto | 🟡 Médio | 🟢 Baixo> <!-- consequência se passar; eixo separado da confiança, R35 -->
 - **Âncora:** `<arquivo>:<linha>` — lado: <novo | antigo | contexto> <!-- onde postar o comentário no PR, R25 -->
 - **Confiança:** <80–100>%
 - **Evidência:**
@@ -109,7 +132,9 @@
 
 ## Próximos passos
 
-O que você pode fazer agora:
+Use o **risco geral** do TL;DR para calibrar o esforço: 🟢 Baixo permite uma revisão leve
+ou dispensável a seu critério; 🟡 Médio pede leitura dos findings; 🔴 Alto pede revisão
+cuidadosa antes do merge. O que você pode fazer agora:
 
 - **Aprovar o PR** — se os findings acima não bloqueiam.
 - **Pedir mudanças** — se um ou mais findings precisam ser resolvidos antes do merge.

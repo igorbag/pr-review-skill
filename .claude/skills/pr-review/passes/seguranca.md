@@ -45,6 +45,7 @@ Finding com confiança ≥ 80%:
   Lado: <novo | antigo | contexto>          ← onde postar o comentário no PR (R25)
   Evidência: <trecho do diff: fonte → sink>
   Confiança: <80–100>%
+  Risco: <🔴 Alto | 🟡 Médio>      ← finding de segurança raramente é 🟢 Baixo; veja rubrica no SKILL (R35)
   Comentário sugerido: <texto curto ao autor do PR, pronto p/ colar (R26)>
   Citação: <doc de segurança do repo, se a regra vier de um doc obrigatório>
 ```
