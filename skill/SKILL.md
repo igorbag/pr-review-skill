@@ -36,6 +36,34 @@ Segurança, Testes), ② (Convenções ancorada em doc) e ⑥ (Spec). ④ é um 
 não gera finding — nunca o use como pilar de um finding. ③⑤⑦ são pilares de
 **processo**: aparecem só na seção de cobertura, atestando que a etapa rodou.
 
+## Risco de impacto (orientação ao humano que decide)
+
+Cada finding carrega, além de pilar e confiança, um **risco de impacto**: quão grave
+é a consequência **se o problema passar despercebido** — independente da confiança.
+São eixos diferentes: **confiança** = "tenho certeza de que isto é um problema";
+**risco** = "quão ruim fica se eu estiver certo e isto for para produção". Um typo de
+log pode ter confiança 100% e risco Baixo; uma suspeita de SQL injection pode ter
+confiança 70% e risco Alto.
+
+Serve ao pilar ⑤ (Human-in-the-Loop): dá ao humano um sinal de triagem para decidir
+**quanto** revisar — não substitui a decisão dele e **não é veredito** (R15).
+
+| Risco | Quando | Exemplos |
+|---|---|---|
+| 🔴 **Alto** | dano amplo, difícil de reverter ou ligado a segurança/dinheiro/dados | falha de authn/authz, injeção, secret vazado, cripto fraca, perda/corrupção de dados, migration destrutiva, quebra de contrato de API pública, race em estado compartilhado, bug em lógica core que afeta muitos fluxos |
+| 🟡 **Médio** | bug real porém localizado a uma feature/fluxo | regressão de comportamento numa feature, erro tratável que degrada UX, caminho importante sem teste |
+| 🟢 **Baixo** | sem efeito de runtime ou trivialmente reversível | convenção/estilo fora do linter, naming, refactor sem mudança de comportamento, docs/comentários, dead code, teste ausente em caminho trivial |
+
+**Risco geral do PR** = o **maior** risco entre os findings sobreviventes. Sem findings
+→ 🟢 Baixo. Vai no topo do relatório (TL;DR) com a orientação correspondente:
+
+- 🔴 **Alto** → revisão humana cuidadosa recomendada antes do merge.
+- 🟡 **Médio** → vale ler os findings apontados antes de decidir.
+- 🟢 **Baixo** → nada relevante encontrado; a seu critério, a revisão pode ser leve ou dispensável.
+
+Mesmo com risco geral Baixo, se o diff tocou paths sensíveis (auth, pagamentos,
+migrations) sem gerar finding, registre isso como nota no TL;DR — Baixo não é "ignore".
+
 ## 0. Pré-condição: idioma + profile (grounding)
 
 **Idioma do relatório.** Antes de tudo, leia `pr-review.config.json` no diretório
@@ -115,6 +143,9 @@ Cada finding candidato já nasce com os dados de âncora que o relatório vai ex
 autor do PR. O passe que emite o finding define o seu **pilar** (R28): Correção/Segurança/Testes
 → ① Especialização; Spec → ⑥ Rastreabilidade; Convenções ancorada em doc → ② Grounding.
 
+O passe também atribui o **risco de impacto** do finding (🔴 Alto / 🟡 Médio / 🟢 Baixo)
+pela rubrica de "Risco de impacto" acima — eixo separado da confiança (R36).
+
 Nenhum review roda como um prompt único genérico (R6).
 
 ## 4. Second pass — relê o diff inteiro (R9–R11, R19)
@@ -151,13 +182,18 @@ Sobre os findings sobreviventes do meta-review:
 
 ## 7. Relatório (R15–R17)
 
+Comece o relatório por um **TL;DR de risco** no topo: o **risco geral do PR** (🔴/🟡/🟢
+= o maior risco entre os findings sobreviventes; sem findings → 🟢 Baixo), a contagem de
+findings por risco e a orientação correspondente da seção "Risco de impacto" (R35). É um
+sinal de triagem para o humano decidir quanto revisar — nunca um veredito (R15).
+
 Monte o relatório usando `templates/relatorio.template.md`, **escrevendo todo
 o texto voltado ao usuário em `{{LANG}}`** (lido na seção 0; default `pt-BR`):
 títulos, rótulos de seção, descrições de findings e o bloco final de ações. Preserve
 a estrutura, a ordem das seções e os IDs (F1, VS1, R1…). **Não traduza** trechos de
 código/diff, nomes de arquivo, comandos (`/fix`, `/detalhar`) nem citações literais.
 O template já impõe:
-findings com IDs estáveis F1..Fn + **pilar** (R28) + confiança + evidência + **âncora**
+findings com IDs estáveis F1..Fn + **pilar** (R28) + **risco de impacto** (R35) + confiança + evidência + **âncora**
 (`arquivo:linha` + lado do diff, R25) + **comentário sugerido** ao autor (R26) + citação de doc;
 tabela de cobertura; seção de rastreabilidade da spec (R18–R21); a seção **Cobertura dos 7 pilares**
 (R29–R30); saldo de auditoria (R24); e o bloco final de ações ao humano (R16–R17).

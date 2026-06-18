@@ -46,6 +46,7 @@ Para cada finding:
   Lado: <novo | antigo | contexto>          ← onde postar o comentário no PR (R25)
   Evidência: <trecho real do diff que comprova>
   Confiança: <0–100>%
+  Risco: <🔴 Alto | 🟡 Médio | 🟢 Baixo>      ← consequência se passar; veja rubrica no SKILL (R35)
   Comentário sugerido: <texto curto ao autor do PR, pronto p/ colar (R26)>
 ```
 

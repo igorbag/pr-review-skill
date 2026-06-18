@@ -38,6 +38,7 @@ Para cada stack do profile, carregue `checklists/<lang>.md` e aplique a seção 
   Lado: <novo | antigo | contexto>          ← onde postar o comentário no PR (R25)
   Evidência: <trecho do diff: o que mudou sem teste / asserção enfraquecida>
   Confiança: <0–100>%
+  Risco: <🔴 Alto | 🟡 Médio | 🟢 Baixo>      ← consequência se passar; veja rubrica no SKILL (R35)
   Comentário sugerido: <texto curto ao autor do PR, pronto p/ colar (R26)>
   Citação: <doc de testes do repo, se a regra (ex.: "todo handler precisa de teste") vier de doc obrigatório>
 ```
