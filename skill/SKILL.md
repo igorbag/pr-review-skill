@@ -75,7 +75,8 @@ só a saída ao usuário é traduzida.
 
 **Profile.**
 
-1. Procure `PROJECT_PROFILE.md` na raiz do repo.
+1. Procure `PROJECT_PROFILE.md` no diretório canônico da skill (mesma pasta deste
+   `SKILL.md`) — **não** na raiz do repo sob review.
 2. **Se ausente:** rode primeiro `profiling.md` para gerá-lo. Não continue o review
    sem profile — ele é o contrato que define stack, linters e docs. Após gerado, siga.
 3. **Se presente:** leia-o por inteiro. Dele extraia:
